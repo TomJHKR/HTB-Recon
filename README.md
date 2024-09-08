@@ -1,4 +1,4 @@
-# HTB Recon Script
+# HTB Initilisation script
 
 ## Usage
 ` ./recon.sh <IP> <DOMAIN> <DIRECTORY_NAME>`
