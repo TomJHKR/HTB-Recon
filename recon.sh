@@ -74,19 +74,18 @@ cd ~/Desktop/$3
 # Create tmux session and send commands into different windows
 prpr "Creating TMUX sessions" "${BLUE}"
 tmux new -s htb -d
-tmux new-window -d -t htb -n recon
 
-tmux split-window -h -t htb:recon.0
-tmux selectp -t 1
+tmux split-window -h
+tmux selectp -t 0
 
-tmux split-window -h -t htb:recon.1
+tmux split-window -v
 tmux selectp -t 2
 
-tmux split-window -h -t htb:recon.2
+tmux split-window -v
 
-tmux send-keys -t htb:recon.0 "gobuster dir -u http://$domain -w /usr/share/wordlists/dirbuster/directory-list-2.3-$gbsize"
-tmux send-keys -t htb:recon.1 "ffuf -w ~/Desktop/Wordlists/Subdomain.txt -u http://$domain -H "Host:FUZZ.$domain" -c -mc 200"
-tmux send-keys -t htb:recon.2 "nmap -sV -sC $ip"
+tmux send-keys -t 0 "gobuster dir -u http://$domain -w /usr/share/wordlists/dirbuster/directory-list-2.3-$gbsize"
+tmux send-keys -t 1 "ffuf -w ~/Desktop/Wordlists/Subdomain.txt -u http://$domain -H "Host:FUZZ.$domain" -c -mc 200"
+tmux send-keys -t 2 "nmap -sV -sC $ip"
 
 # Finish
 prpr "Usage: 'tmux a -t htb'" "${BLUE}"
