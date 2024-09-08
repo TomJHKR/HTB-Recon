@@ -53,22 +53,31 @@ read gobusters
 if [[ $gobusters == [sS] ]]
 then
 	gbsize='small.txt'
+	prpr "Using small Gobuster wordlist" "${GREEN}"
+else
+	prpr "Using medium Gobuster wordlist" "${YELLOW}"
 fi
+
 prpr 'ffuf wordlist size: Small / Big - (s/b)'
 echo -n ""
 read ffuff
 if [[ $ffuff == [sS] ]]
 then
 	ffufsize='small.txt'
+	prpr "Using small ffuf wordlist" "${GREEN}"
+else
+	prpr "Using big ffuf wordlist" "${RED}"
 fi
 
 
-
+prpr "Creating TMUX sessions" "${BLUE}"
 tmux new -s htb -d
 tmux new-window -d -t htb -n recon
 tmux split-window -h -t htb:recon.0
 tmux split-window -v -t htb:recon.1
 tmux split-window -v -t htb:recon.2
 tmux send-keys -t htb:recon.0 "gobuster dir -u http://$domain -w /usr/share/wordlists/dirbuster/directory-list-2.3-$gbsize"
-tmux send-keys -t htb:recon.1 "ffuf -w /usr/share/wordlists/dirb/$ffufsize -u http://$domain/FUZZ"
+tmux send-keys -t htb:recon.1 "ffuf -w /usr/share/wordlists/dirb/$ffufsize -u http://$domain -H "Host:FUZZ.$domain""
 tmux send-keys -t htb:recon.2 "nmap -sV -sC $ip"
+
+prpr "Usage: 'tmux a -t htb'" "${BLUE}"
