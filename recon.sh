@@ -68,7 +68,7 @@ tmux split-window -h -t htb:recon.0
 tmux split-window -v -t htb:recon.1
 tmux split-window -v -t htb:recon.2
 tmux send-keys -t htb:recon.0 "gobuster dir -u http://$domain -w /usr/share/wordlists/dirbuster/directory-list-2.3-$gbsize"
-tmux send-keys -t htb:recon.1 "ffuf -w /Desktop/Wordlists/subdomain.txt -u http://$domain -H "Host:FUZZ.$domain" -c -mc 200"
+tmux send-keys -t htb:recon.1 "ffuf -w ~/Desktop/Wordlists/subdomain.txt -u http://$domain -H "Host:FUZZ.$domain" -c -mc 200"
 tmux send-keys -t htb:recon.2 "nmap -sV -sC $ip"
 
 # Finish
