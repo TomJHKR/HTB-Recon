@@ -30,9 +30,16 @@ then
 	prpr 'Domain not provided' "${RED}"
 fi
 
-# Variables for ip & domain
+# Ensure that a directory is provided
+if [ -z $3 ]
+then
+	prpr 'Working directory not provided' "${RED}"
+fi
+
+# Variables for ip & domain & directory
 ip=$1
 domain=$2
+dir=$3
 
 # Ask user to add the ip & domain combo to host file
 prpr 'Add domain to hosts file: (Y/N)' "${BLUE}"
@@ -60,13 +67,17 @@ else
 	prpr "Using medium Gobuster wordlist" "${YELLOW}"
 fi
 
+# Create working directory and navigate there
+mkdir ~/Desktop/$1
+cd ~/Desktop/$1
+
 # Create tmux session and send commands into different windows
 prpr "Creating TMUX sessions" "${BLUE}"
 tmux new -s htb -d
 tmux new-window -d -t htb -n recon
-tmux split-window -h -t htb:recon.0
+tmux split-window -v -t htb:recon.0
 tmux split-window -v -t htb:recon.1
-tmux split-window -v -t htb:recon.2
+tmux split-window -h -t htb:recon.2
 tmux send-keys -t htb:recon.0 "gobuster dir -u http://$domain -w /usr/share/wordlists/dirbuster/directory-list-2.3-$gbsize"
 tmux send-keys -t htb:recon.1 "ffuf -w ~/Desktop/Wordlists/Subdomain.txt -u http://$domain -H "Host:FUZZ.$domain" -c -mc 200"
 tmux send-keys -t htb:recon.2 "nmap -sV -sC $ip"
