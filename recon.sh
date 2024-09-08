@@ -70,6 +70,9 @@ fi
 # Create working directory and navigate there
 mkdir ~/Desktop/$3
 cd ~/Desktop/$3
+echo "Notes for Hack The Box Lab $3" >> $3-notes.txt
+echo "IP: $1" >> $3-notes.txt
+echo "Domain: $2" >> $3-notes.txt
 
 # Create tmux session and send commands into different windows
 prpr "Creating TMUX sessions" "${BLUE}"
@@ -83,9 +86,10 @@ tmux selectp -t 2
 
 tmux split-window -v
 
-tmux send-keys -t 0 "gobuster dir -u http://$domain -w /usr/share/wordlists/dirbuster/directory-list-2.3-$gbsize"
-tmux send-keys -t 1 "ffuf -w ~/Desktop/Wordlists/Subdomain.txt -u http://$domain -H "Host:FUZZ.$domain" -c -mc 200"
-tmux send-keys -t 2 "nmap -sV -sC $ip"
+tmux send-keys -t 0 "gobuster dir -u http://$domain -w /usr/share/wordlists/dirbuster/directory-list-2.3-$gbsize" C-m
+tmux send-keys -t 1 "ffuf -w ~/Desktop/Wordlists/Subdomain.txt -u http://$domain -H "Host:FUZZ.$domain" -c -mc 200" C-m
+tmux send-keys -t 2 "nmap -sV -sC $ip" C-m
+tmux send-keys -t 3 "nvim $3-notes.txt" C-m
 
 # Finish
 prpr "Usage: 'tmux a -t htb'" "${BLUE}"
