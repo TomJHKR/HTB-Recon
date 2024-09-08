@@ -52,14 +52,14 @@ echo -n ""
 read gobusters
 if [[ $gobusters == [sS] ]]
 then
-	$gbsize='small.txt'
+	gbsize='small.txt'
 fi
 prpr 'ffuf wordlist size: Small / Big - (s/b)'
 echo -n ""
 read ffuff
 if [[ $ffuff == [sS] ]]
 then
-	$ffufsize='small.txt'
+	ffufsize='small.txt'
 fi
 
 
