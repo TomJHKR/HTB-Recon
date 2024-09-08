@@ -10,31 +10,31 @@ GREEN='\033[0;32m'      # Green
 YELLOW='\033[0;33m'	# Yellow
 BLUE='\033[0;34m'       # Blue
 
-
+# Function to aid with nice printing
 function prpr {
 	local msg=$1
 	local col=$2
 	echo -e "${col}${BOLD}$1${NC}"
 }
 
-if [ "$#" -eq "0" ]
-	then
-		echo -e "${RED}${BOLD}Arguments not provided${NC}"
-fi
-
+# Check if there are args
+# Ensure that IP is provided
 if [ -z $1 ]
 then
 	prpr 'IP not provided' "${RED}"
 fi
 
+# Ensure that domain is provided
 if [ -z $2 ]
 then
 	prpr 'Domain not provided' "${RED}"
 fi
 
+# Variables for ip & domain
 ip=$1
 domain=$2
 
+# Ask user to add the ip & domain combo to host file
 prpr 'Add domain to hosts file: (Y/N)' "${BLUE}"
 echo -n ""
 read add
@@ -45,8 +45,11 @@ else
 	prpr 'Not adding to hosts file - Continuing' "${YELLOW}"
 fi
 
+# Default wordlist sizes
 gbsize='medium.txt'
 ffufsize='big.txt'
+
+# get size for gobuster
 prpr 'Gobuster wordlist size: Small / Medium - (s/m)'
 echo -n ""
 read gobusters
@@ -58,6 +61,7 @@ else
 	prpr "Using medium Gobuster wordlist" "${YELLOW}"
 fi
 
+# get size for ffuf
 prpr 'ffuf wordlist size: Small / Big - (s/b)'
 echo -n ""
 read ffuff
@@ -69,7 +73,7 @@ else
 	prpr "Using big ffuf wordlist" "${RED}"
 fi
 
-
+# Create tmux session and send commands into different windows
 prpr "Creating TMUX sessions" "${BLUE}"
 tmux new -s htb -d
 tmux new-window -d -t htb -n recon
@@ -77,7 +81,8 @@ tmux split-window -h -t htb:recon.0
 tmux split-window -v -t htb:recon.1
 tmux split-window -v -t htb:recon.2
 tmux send-keys -t htb:recon.0 "gobuster dir -u http://$domain -w /usr/share/wordlists/dirbuster/directory-list-2.3-$gbsize"
-tmux send-keys -t htb:recon.1 "ffuf -w /usr/share/wordlists/dirb/$ffufsize -u http://$domain -H "Host:FUZZ.$domain""
+tmux send-keys -t htb:recon.1 "ffuf -w /usr/share/wordlists/dirb/$ffufsize -u http://$domain -H "Host:FUZZ.$domain" -c -mc 200"
 tmux send-keys -t htb:recon.2 "nmap -sV -sC $ip"
 
+# Finish
 prpr "Usage: 'tmux a -t htb'" "${BLUE}"
