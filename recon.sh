@@ -35,10 +35,6 @@ fi
 ip=$1
 domain=$2
 
-prpr 'Beginning Nmap Scan' "${GREEN}"
-
-nmap -sV -sC $ip
-
 prpr 'Add domain to hosts file: (Y/N)' "${BLUE}"
 echo -n ""
 read add
@@ -49,9 +45,30 @@ else
 	prpr 'Not adding to hosts file - Continuing' "${YELLOW}"
 fi
 
+gbsize='medium.txt'
+ffufsize='big.txt'
+prpr 'Gobuster wordlist size: Small / Medium - (s/m)'
+echo -n ""
+read gobusters
+if [[ $gobusters == [sS] ]]
+then
+	$gbsize='small.txt'
+fi
+prpr 'ffuf wordlist size: Small / Big - (s/b)'
+echo -n ""
+read ffuff
+if [[ $ffuff == [sS] ]]
+then
+	$ffufsize='small.txt'
+fi
+
+
+
 tmux new -s htb -d
-tmux new-window -d -t htb -n DASH
-tmux split-window -h -t htb:DASH.0
-tmux split-window -v -t htb:DASH.1
-tmux send-keys -t htb:DASH.0 "gobuster dir -u http://$domain -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt"
-tmux send-keys -t htb:DASH.1 "ffuf -w /usr/share/wordlists/dirb/big.txt -u http://$domain/FUZZ"
+tmux new-window -d -t htb -n recon
+tmux split-window -h -t htb:recon.0
+tmux split-window -v -t htb:recon.1
+tmux split-window -v -t htb:recon.2
+tmux send-keys -t htb:recon.0 "gobuster dir -u http://$domain -w /usr/share/wordlists/dirbuster/directory-list-2.3-$gbsize"
+tmux send-keys -t htb:recon.1 "ffuf -w /usr/share/wordlists/dirb/$ffufsize -u http://$domain/FUZZ"
+tmux send-keys -t htb:recon.2 "nmap -sV -sC $ip"
