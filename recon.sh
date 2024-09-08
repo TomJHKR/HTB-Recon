@@ -47,7 +47,6 @@ fi
 
 # Default wordlist sizes
 gbsize='medium.txt'
-ffufsize='big.txt'
 
 # get size for gobuster
 prpr 'Gobuster wordlist size: Small / Medium - (s/m)'
@@ -61,18 +60,6 @@ else
 	prpr "Using medium Gobuster wordlist" "${YELLOW}"
 fi
 
-# get size for ffuf
-prpr 'ffuf wordlist size: Small / Big - (s/b)'
-echo -n ""
-read ffuff
-if [[ $ffuff == [sS] ]]
-then
-	ffufsize='small.txt'
-	prpr "Using small ffuf wordlist" "${GREEN}"
-else
-	prpr "Using big ffuf wordlist" "${RED}"
-fi
-
 # Create tmux session and send commands into different windows
 prpr "Creating TMUX sessions" "${BLUE}"
 tmux new -s htb -d
@@ -81,7 +68,7 @@ tmux split-window -h -t htb:recon.0
 tmux split-window -v -t htb:recon.1
 tmux split-window -v -t htb:recon.2
 tmux send-keys -t htb:recon.0 "gobuster dir -u http://$domain -w /usr/share/wordlists/dirbuster/directory-list-2.3-$gbsize"
-tmux send-keys -t htb:recon.1 "ffuf -w /usr/share/wordlists/dirb/$ffufsize -u http://$domain -H "Host:FUZZ.$domain" -c -mc 200"
+tmux send-keys -t htb:recon.1 "ffuf -w /Desktop/Wordlists/subdomain.txt -u http://$domain -H "Host:FUZZ.$domain" -c -mc 200"
 tmux send-keys -t htb:recon.2 "nmap -sV -sC $ip"
 
 # Finish
